@@ -1,7 +1,7 @@
 package com.tutorial.simple.user;
 
 import com.tutorial.simple.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -9,36 +9,33 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/users")
+@RequiredArgsConstructor
 public class UserResource {
-    private final UsersDaoService usersDaoService;
-
-    @Autowired
-    public UserResource(UsersDaoService usersDaoService) {
-        this.usersDaoService = usersDaoService;
-    }
+    private final UserRepository userRepository;
 
     @GetMapping("")
     public List<User> getUsers() {
-        return usersDaoService.findAll();
+        return userRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable int id) {
-        User user = usersDaoService.findOne(id);
+    public User getUser(@PathVariable String id) {
+        Optional<User> user = userRepository.findById(id);
 
-        if (user == null) {
-            throw new ResourceNotFoundException("ID: " + id);
+        if (user.isEmpty()) {
+            throw new ResourceNotFoundException("User ID: " + id);
         }
 
-        return user;
+        return user.get();
     }
 
     @PostMapping("")
     public ResponseEntity<URI> createUser(@RequestBody User user) {
-        User savedUser = usersDaoService.save(user);
+        User savedUser = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
@@ -50,11 +47,7 @@ public class UserResource {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable int id) {
-        boolean userHasBeenDeleted = usersDaoService.deleteById(id);
-
-        if (!userHasBeenDeleted) {
-            throw new ResourceNotFoundException("ID: " + id);
-        }
+    public void deleteUser(@PathVariable String id) {
+        userRepository.deleteById(id);
     }
 }
