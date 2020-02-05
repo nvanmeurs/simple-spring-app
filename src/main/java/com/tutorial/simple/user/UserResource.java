@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/users")
@@ -24,7 +24,7 @@ public class UserResource {
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable String id) {
-        Optional<User> user = userRepository.findById(id);
+        final var user = userRepository.findById(id);
 
         if (user.isEmpty()) {
             throw new ResourceNotFoundException("User ID: " + id);
@@ -34,10 +34,10 @@ public class UserResource {
     }
 
     @PostMapping("")
-    public ResponseEntity<URI> createUser(@RequestBody User user) {
-        User savedUser = userRepository.save(user);
+    public ResponseEntity<URI> createUser(@Valid @RequestBody User user) {
+        final var savedUser = userRepository.save(user);
 
-        URI location = ServletUriComponentsBuilder
+        final var location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
             .buildAndExpand(savedUser.getId())
