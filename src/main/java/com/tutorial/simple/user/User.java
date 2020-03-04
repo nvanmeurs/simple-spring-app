@@ -15,7 +15,7 @@ public class User {
     private String id;
 
     @NotBlank(message="Name is a mandatory field")
-    @Size(min=2, max=128, message="Name should have at least 2 characters, and no more than 128 characters")
+    @Size(min=5, max=128, message="Name should have at least 5 characters, and no more than 128 characters")
     private String name;
 
     @NotNull(message="Birth date is a mandatory field")
