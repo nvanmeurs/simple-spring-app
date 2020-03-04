@@ -19,7 +19,7 @@ public class SimpleApplication {
 	@Bean
 	public LocaleResolver localeResolver() {
 		final var localeResolver = new AcceptHeaderLocaleResolver();
-		localeResolver.setDefaultLocale(Locale.US);
+		localeResolver.setDefaultLocale(Locale.NL);
 
 		return localeResolver;
 	}
